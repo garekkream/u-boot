@@ -11,6 +11,9 @@ choice
 config VENDOR_COREBOOT
 	bool "coreboot"
 
+config VENDOR_UEFI
+	bool "uefi"
+
 config VENDOR_EMULATION
 	bool "emulation"
 
@@ -24,6 +27,7 @@ endchoice
 
 # board-specific options below
 source "board/coreboot/Kconfig"
+source "board/uefi/Kconfig"
 source "board/emulation/Kconfig"
 source "board/google/Kconfig"
 source "board/intel/Kconfig"
@@ -31,6 +35,7 @@ source "board/intel/Kconfig"
 # platform-specific options below
 source "arch/x86/cpu/baytrail/Kconfig"
 source "arch/x86/cpu/coreboot/Kconfig"
+source "arch/x86/cpu/uefi/Kconfig"
 source "arch/x86/cpu/ivybridge/Kconfig"
 source "arch/x86/cpu/qemu/Kconfig"
 source "arch/x86/cpu/quark/Kconfig"

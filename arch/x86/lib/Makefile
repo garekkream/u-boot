@@ -24,7 +24,9 @@ obj-$(CONFIG_PCI) += pci_type1.o
 endif
 obj-y	+= pch-uclass.o
 obj-y	+= pirq_routing.o
+ifndef CONFIG_VENDOR_UEFI
 obj-y	+= relocate.o
+endif
 obj-y += physmem.o
 obj-$(CONFIG_X86_RAMTEST) += ramtest.o
 obj-y += sfi.o

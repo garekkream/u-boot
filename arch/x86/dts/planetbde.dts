@@ -1,0 +1,60 @@
+/*
+ * Copyright (C) 2014, Bin Meng <bmeng.cn@gmail.com>
+ *
+ * SPDX-License-Identifier:	GPL-2.0+
+ *
+ * based on minnowmax.dts
+ */
+
+/dts-v1/;
+
+/include/ "skeleton.dtsi"
+/include/ "serial.dtsi"
+
+/ {
+	model = "Intel Broadwell-DE";
+	compatible = "intel,Broadwell-DE";
+
+	aliases {
+		serial0 = &serial;
+	};
+
+	config {
+		silent_console = <0>;
+		/* do not auto-load environment in initr_env() */
+		load-environment = <0>;
+	};
+
+	chosen {
+		stdout-path = "/serial";
+	};
+
+	spi {
+		#address-cells = <1>;
+		#size-cells = <0>;
+		compatible = "intel,ich";
+		spi-flash@0 {
+			reg = <0>;
+			compatible = "sst,25vf016b", "spi-flash";
+			memory-map = <0xff800000 0x00800000>;
+		};
+	};
+
+	microcode {
+		update@0 {
+#include "microcode/m0130673322.dtsi"
+		};
+	};
+
+	pci {
+		compatible = "pci-x86";
+		#address-cells = <3>;
+		#size-cells = <2>;
+		/* see pci-uclass.c for space encoding * /
+		/*           space:1     pci_addr:2        addr:1          size:2          */
+		ranges = <0x02000000 0x0 0xd0000000    0xd0000000    0 0x10000000   /* MEM */
+			  0x01000000 0x0 0x00002000    0x00002000    0 0x0000e000   /* IO  */
+			  0x42000000 0x0 0xc0000000    0xc0000000    0 0x10000000>; /* PRE */
+	};
+
+};

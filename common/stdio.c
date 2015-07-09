@@ -278,6 +278,9 @@ int stdio_add_devices(void)
 #ifdef CONFIG_CBMEM_CONSOLE
 	cbmemc_init();
 #endif
+#ifdef CONFIG_UEFIMEM_CONSOLE
+	uefimemc_init();
+#endif
 
 	return 0;
 }

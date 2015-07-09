@@ -1,0 +1,5 @@
+UEFI BOARD
+M:	Simon Glass <sjg@chromium.org>
+S:	Maintained
+F:	board/uefi/uefi/
+F:	configs/uefi-x86_defconfig

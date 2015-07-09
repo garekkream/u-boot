@@ -678,8 +678,8 @@ u-boot-alldirs	:= $(sort $(u-boot-dirs) $(patsubst %/,%,$(filter %/, $(libs-))))
 
 libs-y		:= $(patsubst %/, %/built-in.o, $(libs-y))
 
-u-boot-init := $(head-y)
-u-boot-main := $(libs-y)
+u-boot-init = $(head-y)
+u-boot-main = $(libs-y)
 
 
 # Add GCC lib

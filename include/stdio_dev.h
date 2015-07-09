@@ -131,5 +131,8 @@ int drv_jtag_console_init (void);
 #ifdef CONFIG_CBMEM_CONSOLE
 int cbmemc_init(void);
 #endif
+#ifdef CONFIG_UEFIMEM_CONSOLE
+int uefimemc_init(void);
+#endif
 
 #endif

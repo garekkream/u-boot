@@ -2,10 +2,12 @@
 # SPDX-License-Identifier:	GPL-2.0+
 #
 
+ifeq ($(CONFIG_SYS_UEFI),)
 head-y := arch/x86/cpu/start.o
 ifeq ($(CONFIG_SPL_BUILD),y)
 head-y += arch/x86/cpu/start16.o
 head-y += arch/x86/cpu/resetvec.o
+endif
 endif
 
 libs-y += arch/x86/cpu/

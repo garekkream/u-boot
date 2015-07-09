@@ -1,0 +1,15 @@
+if TARGET_UEFI
+
+config SYS_UEFI
+	bool
+	default y
+
+config UEFIMEM_CONSOLE
+	bool
+	default y
+
+config VIDEO_UEFI
+	bool
+	default y
+
+endif
