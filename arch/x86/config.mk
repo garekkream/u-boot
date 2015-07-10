@@ -19,8 +19,6 @@ PLATFORM_CPPFLAGS += -march=i386 -m32
 
 PLATFORM_RELFLAGS += -ffunction-sections -fvisibility=hidden
 
-PLATFORM_LDFLAGS += --emit-relocs -Bsymbolic -Bsymbolic-functions -m elf_i386
-
 LDFLAGS_FINAL += --gc-sections -pie
 LDFLAGS_FINAL += --wrap=__divdi3 --wrap=__udivdi3
 LDFLAGS_FINAL += --wrap=__moddi3 --wrap=__umoddi3
@@ -37,9 +35,16 @@ endif
 
 EFI_LIBS := $(EFILIB)/libefi.a $(EFILIB)/libgnuefi.a
 EFI_CRT_OBJS := $(EFILIB)/crt0-efi-$(EFIARCH).o
-EFI_LDS := $(EFILIB)/elf_$(EFIARCH)_efi.lds
+U_BOOT_LDS := $(EFILIB)/elf_$(EFIARCH)_efi.lds
 EFIINC=/usr/include/efi
 CFLAGS_EFI =  -I$(EFIINC)/$(EFIARCH) -I$(EFIINC)/protocol -DEFI_FUNCTION_WRAPPER
 
-LDFLAGS_FINAL := -nostdlib -znocombreloc -T $(EFI_LDS) -shared -Bsymbolic
+LDFLAGS_FINAL := -nostdlib -znocombreloc -shared -Bsymbolic
+
+PLATFORM_LDFLAGS += -m elf_i386
+
+else
+
+PLATFORM_LDFLAGS += --emit-relocs -Bsymbolic -Bsymbolic-functions
+
 endif

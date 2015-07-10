@@ -1125,7 +1125,7 @@ u-boot.elf: u-boot.bin
 # May be overridden by arch/$(ARCH)/config.mk
 quiet_cmd_u-boot__ ?= LD      $@
       cmd_u-boot__ ?= $(LD) $(LDFLAGS) $(LDFLAGS_u-boot) -o $@ \
-      -T u-boot.lds $(u-boot-init)                             \
+      -T $(if $(U_BOOT_LDS),$(U_BOOT_LDS),u-boot.lds) $(u-boot-init)                             \
       --start-group $(u-boot-main) --end-group                 \
       $(PLATFORM_LIBS) -Map u-boot.map
 
