@@ -672,7 +672,7 @@ libs-y += $(if $(BOARDDIR),board/$(BOARDDIR)/)
 
 libs-y := $(sort $(libs-y))
 
-u-boot-dirs	:= $(patsubst %/,%,$(filter %/, $(libs-y))) tools examples
+u-boot-dirs	:= $(patsubst %/,%,$(filter %/, $(libs-y))) tools #examples
 
 u-boot-alldirs	:= $(sort $(u-boot-dirs) $(patsubst %/,%,$(filter %/, $(libs-))))
 
@@ -688,6 +688,7 @@ PLATFORM_LIBGCC = arch/$(ARCH)/lib/lib.a
 else
 PLATFORM_LIBGCC := -L $(shell dirname `$(CC) $(c_flags) -print-libgcc-file-name`) -lgcc
 endif
+PLATFORM_LIBGCC := -L /usr/lib32 /usr/lib32/crt0-efi-ia32.o
 PLATFORM_LIBS += $(PLATFORM_LIBGCC)
 export PLATFORM_LIBS
 export PLATFORM_LIBGCC
