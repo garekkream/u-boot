@@ -242,6 +242,7 @@ int disable_interrupts(void)
 
 int interrupt_init(void)
 {
+#ifndef CONFIG_ARCH_EFI
 	/* Just in case... */
 	disable_interrupts();
 
@@ -255,6 +256,7 @@ int interrupt_init(void)
 
 	/* It is now safe to enable interrupts */
 	enable_interrupts();
+#endif
 
 	return 0;
 }
