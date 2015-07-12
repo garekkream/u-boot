@@ -6,6 +6,7 @@
 
 #include <common.h>
 #include <initcall.h>
+#include <efi.h>
 
 DECLARE_GLOBAL_DATA_PTR;
 
@@ -19,6 +20,9 @@ int initcall_run_list(const init_fnc_t init_sequence[])
 
 		if (gd->flags & GD_FLG_RELOC)
 			reloc_ofs = gd->reloc_off;
+#ifdef CONFIG_ARCH_EFI
+		reloc_ofs = (unsigned long)ImageBase;
+#endif
 		debug("initcall: %p", (char *)*init_fnc_ptr - reloc_ofs);
 		if (gd->flags & GD_FLG_RELOC)
 			debug(" (relocated to %p)\n", (char *)*init_fnc_ptr);
