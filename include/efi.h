@@ -268,11 +268,15 @@ struct efi_priv {
 /* Base address of the EFI image */
 extern char ImageBase[];
 
+/* Start and end of U-Boot image (for payload) */
+extern char __u_boot_bin_begin[], __u_boot_bin_end[];
+
 /**
  * efi_get_sys_table() - Get access to the main EFI system table
  *
  * @return pointer to EFI system table
  */
+
 struct efi_system_table *efi_get_sys_table(void);
 
 /**
