@@ -103,6 +103,8 @@ static void dump_regs(struct irq_regs *regs)
 
 	printf("EIP: %04x:[<%08lx>] EFLAGS: %08lx\n",
 			(u16)cs, eip, eflags);
+	if (gd->flags & GD_FLG_RELOC)
+		printf("reloc EIP : [<%08lx>]\n", eip - gd->reloc_off);
 
 	printf("EAX: %08lx EBX: %08lx ECX: %08lx EDX: %08lx\n",
 		regs->eax, regs->ebx, regs->ecx, regs->edx);
@@ -139,11 +141,20 @@ static void dump_regs(struct irq_regs *regs)
 	sp += 64;
 
 	while (sp > (regs->esp - 16)) {
+		unsigned long val;
+
 		if (sp == regs->esp)
 			printf("--->");
 		else
 			printf("    ");
-		printf("0x%8.8lx : 0x%8.8lx\n", sp, (ulong)readl(sp));
+		val = readl(sp);
+		printf("0x%8.8lx : 0x%8.8lx", sp, val);
+		if (val >= gd->relocaddr && val < gd->relocaddr + gd->mon_len)
+			printf("   code %#08lx", val - gd->reloc_off);
+		else if (val > gd->start_addr_sp + gd->mon_len &&
+			 val < gd->ram_top)
+			printf("   data %#08lx", val - gd->reloc_off);
+		putc('\n');
 		sp -= 4;
 	}
 }
