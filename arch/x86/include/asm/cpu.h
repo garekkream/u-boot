@@ -27,6 +27,16 @@ enum {
 	X86_VENDOR_UNKNOWN = 0xff
 };
 
+/* Global descriptor table (GDT) bits */
+enum {
+	GDT_4GB			= 1ULL << 55,
+	GDT_32BIT		= 1ULL << 54,
+	GDT_LONG		= 1ULL << 53,
+	GDT_PRESENT		= 1ULL << 47,
+	GDT_NOTSYS		= 1ULL << 44,
+	GDT_CODE		= 1ULL << 43,
+};
+
 struct cpuid_result {
 	uint32_t eax;
 	uint32_t ebx;
