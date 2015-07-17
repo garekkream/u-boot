@@ -1109,7 +1109,7 @@ u-boot-payload.lds: $(LDSCRIPT_EFI) FORCE
 u-boot-payload: u-boot-dtb.bin.o u-boot-payload.lds \
 		FORCE
 	$(LD) $(LDFLAGS_EFI) -o $@ \
-      -T u-boot-payload.lds \
+      -T u-boot-payload.lds arch/x86/cpu/call32.o \
       lib/efi/efi.o lib/efi/efi_stub.o u-boot-dtb.bin.o \
       $(addprefix arch/$(ARCH)/lib/,$(EFISTUB))
 

@@ -15,7 +15,10 @@ PF_CPPFLAGS_X86   := $(call cc-option, -fno-toplevel-reorder, \
 
 PLATFORM_CPPFLAGS += $(PF_CPPFLAGS_X86)
 PLATFORM_CPPFLAGS += -fno-dwarf2-cfi-asm
+
+ifeq ($(CONFIG_X86_64),)
 PLATFORM_CPPFLAGS += -march=i386 -m32
+endif
 
 PLATFORM_RELFLAGS += -ffunction-sections -fvisibility=hidden
 
@@ -33,10 +36,18 @@ OBJCOPYFLAGS_EFI := -j .text -j .sdata -j .data -j .dynamic -j .dynsym \
 CFLAGS_NON_EFI := -mregparm=3
 CFLAGS_EFI := -fpic -fshort-wchar $(call cc-option, -mno-red-zone)
 
+ifeq ($(CONFIG_X86_64)$(CONFIG_EFI_STUB_64BIT),)
 EFIARCH=ia32
+else
+EFIARCH=x86_64
+endif
 
 LDSCRIPT_EFI := $(srctree)/$(CPUDIR)/efi/elf_$(EFIARCH)_efi.lds
+EFISTUB := crt0-efi-$(EFIARCH).o reloc_$(EFIARCH).o
 OBJCOPYFLAGS_EFI += --target=efi-app-$(EFIARCH)
+
+CPPFLAGS_REMOVE_crt0-efi-$(EFIARCH).o += $(CFLAGS_NON_EFI)
+CPPFLAGS_crt0-efi-$(EFIARCH).o += $(CFLAGS_EFI)
 
 ifeq ($(CONFIG_ARCH_EFI),y)
 
