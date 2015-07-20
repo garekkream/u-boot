@@ -165,6 +165,7 @@ int boot_linux_kernel(ulong setup_base, ulong load_address, bool image_64bit)
 		* U-boot is setting them up that way for itself in
 		* arch/i386/cpu/cpu.c.
 		*/
+#ifndef CONFIG_ARCH_EFI
 		__asm__ __volatile__ (
 		"movl $0, %%ebp\n"
 		"cli\n"
@@ -173,6 +174,7 @@ int boot_linux_kernel(ulong setup_base, ulong load_address, bool image_64bit)
 		[boot_params] "S"(setup_base),
 		"b"(0), "D"(0)
 		);
+#endif
 	}
 
 	/* We can't get to here */
