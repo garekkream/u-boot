@@ -31,6 +31,7 @@ obj-y += bios_interrupts.o
 obj-$(CONFIG_CMD_BOOTM) += bootm.o
 obj-y	+= cmd_boot.o
 obj-$(CONFIG_HAVE_FSP) += cmd_hob.o
+obj-$(CONFIG_EFI_STUB) += efi/
 obj-y	+= gcc.o
 obj-y	+= init_helpers.o
 obj-y	+= interrupts.o
