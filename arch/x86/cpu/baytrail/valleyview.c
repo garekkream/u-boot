@@ -20,6 +20,7 @@ int cpu_mmc_init(bd_t *bis)
 			    ARRAY_SIZE(mmc_supported));
 }
 
+#ifndef CONFIG_ARCH_EFI
 int arch_cpu_init(void)
 {
 	int ret;
@@ -35,3 +36,4 @@ int arch_cpu_init(void)
 
 	return 0;
 }
+#endif
