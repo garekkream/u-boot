@@ -53,6 +53,9 @@ _start:
 	/* Save BIST */
 	movl	%eax, %ebp
 
+	/* Save table pointer */
+	movl	%ecx, %esi
+
 	/* Load the segement registers to match the GDT loaded in start16.S */
 	movl	$(X86_GDT_ENTRY_32BIT_DS * X86_GDT_ENTRY_SIZE), %eax
 	movw	%ax, %fs
@@ -129,7 +132,13 @@ car_init_ret:
 	movl	%esi, (%edx)
 
 skip_hob:
+#else
+	/* Store table pointer */
+	movl	%esp, %edx
+	addl	$GD_TABLE, %edx
+	movl	%esi, (%edx)
 #endif
+
 	/* Setup first parameter to setup_gdt, pointer to global_data */
 	movl	%esp, %eax
 
