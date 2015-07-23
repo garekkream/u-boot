@@ -62,17 +62,4 @@
 #define CONFIG_ENV_SECT_SIZE		0x1000
 #define CONFIG_ENV_OFFSET		0x007fe000
 
-#include <config_distro_defaults.h>
-
-#define BOOT_TARGET_DEVICES(func) \
-	func(MMC, mmc, 0) \
-	func(USB, usb, 0) \
-	func(DHCP, dhcp, na)
-#include <config_distro_bootcmd.h>
-
-#undef CONFIG_EXTRA_ENV_SETTINGS
-
-#define CONFIG_EXTRA_ENV_SETTINGS \
-	BOOTENV
-
 #endif	/* __CONFIG_H */
