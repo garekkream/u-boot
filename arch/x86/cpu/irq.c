@@ -3,7 +3,7 @@
  *
  * SPDX-License-Identifier:	GPL-2.0+
  */
-
+#define DEBUG
 #include <common.h>
 #include <errno.h>
 #include <fdtdec.h>
@@ -125,10 +125,10 @@ static int create_pirq_routing_table(void)
 			return -EINVAL;
 	}
 
-	ret = fdtdec_get_int_array(blob, node, "intel,pirq-link",
-				   &irq_router.link_base, 1);
-	if (ret)
+	ret = fdtdec_get_int(blob, node, "intel,pirq-link", -1);
+	if (ret == -1)
 		return ret;
+	irq_router.link_base = ret;
 
 	irq_router.irq_mask = fdtdec_get_int(blob, node,
 					     "intel,pirq-mask", PIRQ_BITMAP);
@@ -244,6 +244,7 @@ void pirq_init(void)
 {
 	cpu_irq_init();
 
+	debug("%s\n", __func__);
 	if (create_pirq_routing_table()) {
 		debug("Failed to create pirq routing table\n");
 	} else {

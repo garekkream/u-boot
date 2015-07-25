@@ -7,6 +7,7 @@
 /dts-v1/;
 
 #include <dt-bindings/gpio/x86-gpio.h>
+#include <dt-bindings/interrupt-router/intel-irq.h>
 
 /include/ "skeleton.dtsi"
 /include/ "serial.dtsi"
@@ -120,6 +121,32 @@
 		ranges = <0x02000000 0x0 0xd0000000 0xd0000000 0 0x10000000
 			0x42000000 0x0 0xc0000000 0xc0000000 0 0x10000000
 			0x01000000 0x0 0x2000 0x2000 0 0xe000>;
+
+		irq-router@1f,0 {
+			reg = <0x0000f800 0 0 0 0>;
+			compatible = "intel,irq-router";
+			intel,pirq-config = "ibase";
+			intel,ibase-offset = <0x50>;
+			intel,pirq-link = <0x20 32>;
+			intel,pirq-mask = <0xdcb0>;
+			intel,pirq-routing = <
+				PCI_BDF(0, 0x02, 0) INTB PIRQA
+				PCI_BDF(0, 0x10, 0) INTA PIRQD
+				PCI_BDF(0, 0x11, 0) INTA PIRQB
+				PCI_BDF(0, 0x12, 0) INTA PIRQC
+				PCI_BDF(0, 0x13, 0) INTA PIRQD
+				PCI_BDF(0, 0x14, 0) INTA PIRQE
+				PCI_BDF(0, 0x15, 0) INTC PIRQF
+				PCI_BDF(0, 0x17, 0) INTA PIRQF
+				PCI_BDF(0, 0x18, 0) INTA PIRQB
+				PCI_BDF(0, 0x1a, 0) INTA PIRQF
+				PCI_BDF(0, 0x1b, 0) INTA PIRQG
+				PCI_BDF(0, 0x1c, 0) INTD PIRQE
+				PCI_BDF(0, 0x1d, 0) INTA PIRQD
+				PCI_BDF(0, 0x1e, 0) INTB PIRQB
+				PCI_BDF(0, 0x1f, 0) INTC PIRQH
+			>;
+		};
 	};
 
 	spi {
