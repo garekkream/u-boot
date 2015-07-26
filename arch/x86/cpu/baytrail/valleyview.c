@@ -57,7 +57,6 @@ int arch_cpu_init(void)
 #define PIRQ_PIC_IRQ14			0xe
 #define PIRQ_PIC_IRQ15			0xf
 #define PIRQ_PIC_IRQDISABLE		0x80
-#define PIRQ_PIC_UNKNOWN_UNUSED		0xff
 
 #define PCI_DEV_PIRQ_ROUTE(dev_, a_, b_, c_, d_) \
 	[dev_] = ((PIRQ ## d_) << 12) | ((PIRQ ## c_) << 8) | \
@@ -477,7 +476,7 @@ static void write_pci_config_irqs(const struct baytrail_irq_route *ir)
 		} else {
 			/* Set the Interrupt line register as "unknown or unused" */
 			dm_pci_write_config8(dev, PCI_INTERRUPT_LINE,
-					     PIRQ_PIC_UNKNOWN_UNUSED);
+					     PCI_INTERRUPT_LINE_DISABLE);
 		}
 
 		debug("\tINT_PIN\t\t: %d (%s)\n",
