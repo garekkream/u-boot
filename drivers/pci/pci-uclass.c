@@ -284,6 +284,8 @@ int dm_pci_read_config(struct udevice *dev, int offset, unsigned long *valuep,
 	for (bus = dev; device_get_uclass_id(bus->parent) == UCLASS_PCI;
 	     bus = bus->parent)
 	     ;
+// 	printf("%s: bus=%s, bdf=%x, offset=%x, size=%x\n", __func__, bus->name,
+// 	       pci_get_bdf(dev), offset, size);
 	return pci_bus_read_config(bus, pci_get_bdf(dev), offset, valuep,
 				   size);
 }
