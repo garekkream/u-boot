@@ -866,6 +866,10 @@ int pci_bus_find_bdf(pci_dev_t bdf, struct udevice **devp);
 int pci_bus_find_devfn(struct udevice *bus, pci_dev_t find_devfn,
 		       struct udevice **devp);
 
+int pci_find_next_device(struct udevice **devp);
+
+int pci_find_first_device(struct udevice **devp);
+
 /**
  * pci_get_ff() - Returns a mask for the given access size
  *
@@ -944,6 +948,19 @@ int pci_bus_read_config(struct udevice *bus, pci_dev_t bdf, int offset,
  */
 int pci_bus_write_config(struct udevice *bus, pci_dev_t bdf, int offset,
 			 unsigned long value, enum pci_size_t size);
+
+int dm_pci_read_config(struct udevice *dev, int offset, unsigned long *valuep,
+		       enum pci_size_t size);
+int dm_pci_read_config8(struct udevice *dev, int offset, u8 *valuep);
+int dm_pci_read_config16(struct udevice *dev, int offset, u16 *valuep);
+int dm_pci_read_config32(struct udevice *dev, int offset, u32 *valuep);
+
+int dm_pci_write_config(struct udevice *dev, int offset, unsigned long value,
+			enum pci_size_t size);
+
+int dm_pci_write_config8(struct udevice *dev, int offset, u8 value);
+int dm_pci_write_config16(struct udevice *dev, int offset, u16 value);
+int dm_pci_write_config32(struct udevice *dev, int offset, u32 value);
 
 /*
  * The following functions provide access to the above without needing the

@@ -318,6 +318,8 @@ const char *dev_get_uclass_name(struct udevice *dev);
  * @dev:	Parent device to check
  * @index:	Child index
  * @devp:	Returns pointer to device
+ * @return 0 if OK, -ENODEV if no such device, other error if the device fails
+ *	   to probe
  */
 int device_get_child(struct udevice *parent, int index, struct udevice **devp);
 

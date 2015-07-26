@@ -39,7 +39,7 @@ static inline unsigned int score_pconf0(int pad_num)
 	return GPSCORE_PAD_BASE + pad_num * 16;
 }
 
-static void score_select_func(int pad, int func)
+void score_select_func(int pad, int func)
 {
 	uint32_t reg;
 	uint32_t pconf0_addr = score_pconf0(pad);

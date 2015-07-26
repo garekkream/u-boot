@@ -35,6 +35,7 @@ obj-$(CONFIG_EFI_STUB) += efi/
 obj-y	+= gcc.o
 obj-y	+= init_helpers.o
 obj-y	+= interrupts.o
+obj-y	+= isa_dma.o
 obj-y	+= lpc-uclass.o
 obj-y	+= mpspec.o
 obj-y += cmd_mtrr.o

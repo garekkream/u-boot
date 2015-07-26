@@ -259,7 +259,7 @@ int interrupt_init(void)
 
 #ifdef CONFIG_SYS_PCAT_INTERRUPTS
 	/* Initialize the master/slave i8259 pic */
-	i8259_init();
+// 	i8259_init();
 #endif
 
 	/* Initialize core interrupt and exception functionality of CPU */

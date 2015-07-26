@@ -210,6 +210,18 @@ int pci_write_config(pci_dev_t bdf, int offset, unsigned long value,
 	return pci_bus_write_config(bus, bdf, offset, value, size);
 }
 
+int dm_pci_write_config(struct udevice *dev, int offset, unsigned long value,
+			enum pci_size_t size)
+{
+	struct udevice *bus;
+
+	for (bus = dev; device_get_uclass_id(bus->parent) == UCLASS_PCI;
+	     bus = bus->parent)
+	     ;
+	return pci_bus_write_config(bus, pci_get_bdf(dev), offset, value, size);
+}
+
+
 int pci_write_config32(pci_dev_t bdf, int offset, u32 value)
 {
 	return pci_write_config(bdf, offset, value, PCI_SIZE_32);
@@ -223,6 +235,21 @@ int pci_write_config16(pci_dev_t bdf, int offset, u16 value)
 int pci_write_config8(pci_dev_t bdf, int offset, u8 value)
 {
 	return pci_write_config(bdf, offset, value, PCI_SIZE_8);
+}
+
+int dm_pci_write_config8(struct udevice *dev, int offset, u8 value)
+{
+	return dm_pci_write_config(dev, offset, value, PCI_SIZE_8);
+}
+
+int dm_pci_write_config16(struct udevice *dev, int offset, u16 value)
+{
+	return dm_pci_write_config(dev, offset, value, PCI_SIZE_16);
+}
+
+int dm_pci_write_config32(struct udevice *dev, int offset, u32 value)
+{
+	return dm_pci_write_config(dev, offset, value, PCI_SIZE_32);
 }
 
 int pci_bus_read_config(struct udevice *bus, pci_dev_t bdf, int offset,
@@ -247,6 +274,18 @@ int pci_read_config(pci_dev_t bdf, int offset, unsigned long *valuep,
 		return ret;
 
 	return pci_bus_read_config(bus, bdf, offset, valuep, size);
+}
+
+int dm_pci_read_config(struct udevice *dev, int offset, unsigned long *valuep,
+		       enum pci_size_t size)
+{
+	struct udevice *bus;
+
+	for (bus = dev; device_get_uclass_id(bus->parent) == UCLASS_PCI;
+	     bus = bus->parent)
+	     ;
+	return pci_bus_read_config(bus, pci_get_bdf(dev), offset, valuep,
+				   size);
 }
 
 int pci_read_config32(pci_dev_t bdf, int offset, u32 *valuep)
@@ -288,6 +327,45 @@ int pci_read_config8(pci_dev_t bdf, int offset, u8 *valuep)
 	return 0;
 }
 
+int dm_pci_read_config8(struct udevice *dev, int offset, u8 *valuep)
+{
+	unsigned long value;
+	int ret;
+
+	ret = dm_pci_read_config(dev, offset, &value, PCI_SIZE_8);
+	if (ret)
+		return ret;
+	*valuep = value;
+
+	return 0;
+}
+
+int dm_pci_read_config16(struct udevice *dev, int offset, u16 *valuep)
+{
+	unsigned long value;
+	int ret;
+
+	ret = dm_pci_read_config(dev, offset, &value, PCI_SIZE_16);
+	if (ret)
+		return ret;
+	*valuep = value;
+
+	return 0;
+}
+
+int dm_pci_read_config32(struct udevice *dev, int offset, u32 *valuep)
+{
+	unsigned long value;
+	int ret;
+
+	ret = dm_pci_read_config(dev, offset, &value, PCI_SIZE_32);
+	if (ret)
+		return ret;
+	*valuep = value;
+
+	return 0;
+}
+
 int pci_auto_config_devices(struct udevice *bus)
 {
 	struct pci_controller *hose = bus->uclass_priv;
@@ -302,8 +380,17 @@ int pci_auto_config_devices(struct udevice *bus)
 	     !ret && dev;
 	     ret = device_find_next_child(&dev)) {
 		unsigned int max_bus;
+		pci_dev_t bdf = pci_get_bdf(dev);
 
 		debug("%s: device %s\n", __func__, dev->name);
+// 		pci_hose_read_config_word(hose, dev, PCI_VENDOR_ID, &vendor);
+// 		pci_hose_read_config_word(hose, dev, PCI_DEVICE_ID, &device);
+
+		debug("PCI Scan: Found Bus %x, Device %x, Function %x\n",
+			PCI_BUS(bdf), PCI_DEV(bdf), PCI_FUNC(bdf));
+// 		debug("%02x:%02x.%x - %04x:%04x - %s\n",
+// 			PCI_BUS(bdf), PCI_DEV(bdf), PCI_FUNC(bdf),
+// 			vendor, device, pci_class_str(class >> 8));
 		max_bus = pciauto_config_device(hose, pci_get_bdf(dev));
 		sub_bus = max(sub_bus, max_bus);
 	}
@@ -701,6 +788,66 @@ static int pci_bridge_write_config(struct udevice *bus, pci_dev_t bdf,
 	struct pci_controller *hose = bus->uclass_priv;
 
 	return pci_bus_write_config(hose->ctlr, bdf, offset, value, size);
+}
+
+static int skip_to_next_device(struct udevice *bus, struct udevice **devp)
+{
+	struct udevice *dev;
+	int ret = 0;
+
+	do {
+		do {
+			device_find_first_child(bus, &dev);
+// 			if (dev && device_get_uclass_id(dev) != UCLASS_PCI) {
+			if (dev) {
+				*devp = dev;
+				return 0;
+			}
+		} while (dev);
+		ret = uclass_next_device(&bus);
+		if (ret)
+			return ret;
+	} while (bus);
+
+	return 0;
+}
+
+int pci_find_next_device(struct udevice **devp)
+{
+	struct udevice *child = *devp;
+	struct udevice *bus = child->parent;
+	int ret;
+
+	/* First try all the siblings */
+	*devp = NULL;
+	while (child) {
+		device_find_next_child(&child);
+// 		if (child && device_get_uclass_id(child) != UCLASS_PCI) {
+		if (child) {
+			*devp = child;
+			return 0;
+		}
+	}
+
+	/* We ran out of siblings. Try the next bus */
+	ret = uclass_next_device(&bus);
+	if (ret)
+		return ret;
+
+	return bus ? skip_to_next_device(bus, devp) : 0;
+}
+
+int pci_find_first_device(struct udevice **devp)
+{
+	struct udevice *bus;
+	int ret;
+
+	*devp = NULL;
+	ret = uclass_first_device(UCLASS_PCI, &bus);
+	if (ret)
+		return ret;
+
+	return skip_to_next_device(bus, devp);
 }
 
 UCLASS_DRIVER(pci) = {
