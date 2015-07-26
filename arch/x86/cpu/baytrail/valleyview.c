@@ -508,6 +508,10 @@ static void sc_pirq_init(const struct baytrail_irq_route *ir, ulong ibase)
 		debug("\t%d", ir->pic[i]);
 	}
 	debug("\n\n");
+	debug("pr_base = %x\n", pr_base);
+	for (i = 0; i < NUM_PIRQS; i++)
+		debug("%d: %d, ", i, ir->pic[i]);
+	debug("\n");
 
 	/* Set up the per device PIRQ routing based on static config. */
 	debug("\t\t\tPIRQ[A-H] routed to each INT_PIN[A-D]\n"
@@ -529,8 +533,8 @@ static void sc_pirq_init(const struct baytrail_irq_route *ir, ulong ibase)
 		}
 	}
 
-	/* Route SCI to IRQ9 */
-	clrsetbits_le32(actl, SCIS_MASK, SCIS_IRQ9);
+	/* Route SCI to IRQ9 - done already */
+// 	clrsetbits_le32(actl, SCIS_MASK, SCIS_IRQ9);
 	debug("Finished writing IRQ assignments\n");
 
 	/* Write IRQ assignments to PCI config space */
@@ -562,8 +566,9 @@ static int sc_init(struct udevice *dev)
 	debug("soc: southcluster_init\n");
 
 	dm_pci_read_config32(dev, IBASE, &addr);
-	ibase = (u8 *)(addr & ~0xF);
-	debug("ibase=%p\n", ibase);
+	addr &= ~0xf;
+	ibase = (u8 *)addr;
+	debug("ibase = %p\n", ibase);
 
 	set_up_lpc_pads(dev);
 
