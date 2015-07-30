@@ -269,6 +269,24 @@ def log_msg(color_enabled, color, defconfig, msg):
     return defconfig[:-len('_defconfig')].ljust(37) + ': ' + \
         color_text(color_enabled, color, msg) + '\n'
 
+def get_tool_dir(toolchain):
+    for dirname in ['gcc-4.9.0-nolibc', 'gcc-4.6.3-nolibc/',
+                    'gcc-4.5.1-nolibc/', 'gcc-4.2.4-nolibc/']:
+        path = '/home/sglass/.buildman-toolchains/%s/%s' % (dirname, toolchain)
+        if os.path.exists(path):
+            return path
+    if toolchain == 'nds32le-linux':
+        return '/opt/nds32le-linux-glibc-v1f'
+    if toolchain == 'sh-linux-gnu':
+        return '/opt/renesas-2012.09'
+    if toolchain == 'nios2-linux-gnu':
+        return '/opt/nios2'
+    if toolchain == 'arc-linux':
+        return '/opt/arc/usr'
+    if toolchain == 'bfin-elf':
+        return '/opt/uClinux/bfin-elf'
+    sys.exit('Cannot file toolchain for %s' % toolchain)
+
 def update_cross_compile():
     """Update per-arch CROSS_COMPILE via enviroment variables
 
@@ -298,6 +316,11 @@ def update_cross_compile():
         cross_compile = os.environ.get(env)
         if cross_compile:
             CROSS_COMPILE[arch] = cross_compile
+        elif arch != 'sandbox':
+            CROSS_COMPILE[arch] = (get_tool_dir(CROSS_COMPILE[arch][:-1]) +
+                 '/bin/' + CROSS_COMPILE[arch])
+            print CROSS_COMPILE[arch]
+
 
 def cleanup_one_header(header_path, patterns, dry_run):
     """Clean regex-matched lines away from a file.
@@ -751,9 +774,9 @@ def move_config(config_attrs, options):
                     the type, and the default value of the target config.
       options: option flags
     """
-    if len(config_attrs) == 0:
-        print 'Nothing to do. exit.'
-        sys.exit(0)
+    #if len(config_attrs) == 0:
+        #print 'Nothing to do. exit.'
+        #sys.exit(0)
 
     print 'Move the following CONFIG options (jobs: %d)' % options.jobs
     for config_attr in config_attrs:
