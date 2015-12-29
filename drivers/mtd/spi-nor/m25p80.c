@@ -178,7 +178,7 @@ static int m25p80_spi_nor(struct spi_nor *nor)
 		return ret;
 	}
 
-	switch (spi->mode_rx) {
+	switch (spi->mode) {
 	case SPI_RX_SLOW:
 		nor->read_mode = SNOR_READ;
 		break;

@@ -678,10 +678,8 @@ static int ich_spi_child_pre_probe(struct udevice *dev)
 	 * ICH 7 SPI controller only supports array read command
 	 * and byte program command for SST flash
 	 */
-	if (plat->ich_version == PCHV_7) {
-		slave->mode_rx = SPI_RX_SLOW;
-		slave->mode = SPI_TX_BYTE;
-	}
+	if (plat->ich_version == PCHV_7)
+		slave->mode = SPI_TX_BYTE | SPI_RX_SLOW;
 
 	return 0;
 }
