@@ -136,7 +136,7 @@ static int rockchip_spi_ofdata_to_platdata(struct udevice *bus)
 	plat->deactivate_delay_us = fdtdec_get_int(blob, node,
 					"spi-deactivate-delay", 0);
 	debug("%s: base=%x, periph_id=%d, max-frequency=%d, deactivate_delay=%d\n",
-	      __func__, plat->base, plat->periph_id, plat->frequency,
+	      __func__, (uint)plat->base, plat->periph_id, plat->frequency,
 	      plat->deactivate_delay_us);
 
 	return 0;
