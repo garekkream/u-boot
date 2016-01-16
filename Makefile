@@ -921,7 +921,7 @@ MKIMAGEFLAGS_u-boot.pbl = -n $(srctree)/$(CONFIG_SYS_FSL_PBL_RCW:"%"=%) \
 u-boot-dtb.img u-boot.img u-boot.kwb u-boot.pbl: u-boot.bin FORCE
 	$(call if_changed,mkimage)
 
-u-boot-spl.kwb: u-boot-dtb.img spl/u-boot-spl.bin FORCE
+u-boot-spl.kwb: u-boot.img spl/u-boot-spl.bin FORCE
 	$(call if_changed,mkimage)
 
 u-boot.sha1:	u-boot.bin
@@ -1062,7 +1062,7 @@ endif
 cmd_ifdtool += $(IFDTOOL) $(IFDTOOL_FLAGS) u-boot.tmp;
 cmd_ifdtool += mv u-boot.tmp $@
 
-u-boot.rom: u-boot-x86-16bit.bin u-boot-dtb.bin
+u-boot.rom: u-boot-x86-16bit.bin u-boot.bin
 	$(call if_changed,ifdtool)
 
 OBJCOPYFLAGS_u-boot-x86-16bit.bin := -O binary -j .start16 -j .resetvec
@@ -1073,8 +1073,7 @@ endif
 ifneq ($(CONFIG_SUNXI),)
 OBJCOPYFLAGS_u-boot-sunxi-with-spl.bin = -I binary -O binary \
 				   --pad-to=$(CONFIG_SPL_PAD_TO) --gap-fill=0xff
-u-boot-sunxi-with-spl.bin: spl/sunxi-spl.bin \
-			u-boot$(if $(CONFIG_OF_CONTROL),-dtb,).img FORCE
+u-boot-sunxi-with-spl.bin: spl/sunxi-spl.bin u-boot.img FORCE
 	$(call if_changed,pad_cat)
 endif
 
@@ -1091,7 +1090,7 @@ OBJCOPYFLAGS_u-boot-app.efi := $(OBJCOPYFLAGS_EFI)
 u-boot-app.efi: u-boot FORCE
 	$(call if_changed,zobjcopy)
 
-u-boot-dtb.bin.o: u-boot-dtb.bin FORCE
+u-boot.bin.o: u-boot.bin FORCE
 	$(call if_changed,efipayload)
 
 u-boot-payload.lds: $(LDSCRIPT_EFI) FORCE
@@ -1101,10 +1100,10 @@ u-boot-payload.lds: $(LDSCRIPT_EFI) FORCE
 quiet_cmd_u-boot_payload ?= LD      $@
       cmd_u-boot_payload ?= $(LD) $(LDFLAGS_EFI_PAYLOAD) -o $@ \
       -T u-boot-payload.lds arch/x86/cpu/call32.o \
-      lib/efi/efi.o lib/efi/efi_stub.o u-boot-dtb.bin.o \
+      lib/efi/efi.o lib/efi/efi_stub.o u-boot.bin.o \
       $(addprefix arch/$(ARCH)/lib/efi/,$(EFISTUB))
 
-u-boot-payload: u-boot-dtb.bin.o u-boot-payload.lds FORCE
+u-boot-payload: u-boot.bin.o u-boot-payload.lds FORCE
 	$(call if_changed,u-boot_payload)
 
 OBJCOPYFLAGS_u-boot-payload.efi := $(OBJCOPYFLAGS_EFI)
