@@ -1077,8 +1077,9 @@ u-boot-nodtb-tegra.bin: spl/u-boot-spl u-boot.bin FORCE
 	$(call if_changed,pad_cat)
 
 ifeq ($(CONFIG_OF_SEPARATE),y)
-u-boot-dtb-tegra.bin: u-boot-nodtb-tegra.bin dts/dt.dtb FORCE
-	$(call if_changed,cat)
+OBJCOPYFLAGS_u-boot-dtb-tegra.bin = -O binary --pad-to=$(CONFIG_SYS_TEXT_BASE)
+u-boot-dtb-tegra.bin: spl/u-boot-spl u-boot-dtb.bin FORCE
+	$(call if_changed,pad_cat)
 endif
 endif
 
