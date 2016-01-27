@@ -50,9 +50,7 @@ obj-$(CONFIG_BITREVERSE) += bitrev.o
 obj-y += list_sort.o
 endif
 
-ifndef CONFIG_SPL_BUILD
-obj-$(CONFIG_OF_LIBFDT) += libfdt/
-endif
+obj-$(CONFIG_$(SPL)OF_LIBFDT) += libfdt/
 ifdef CONFIG_SPL_OF_CONTROL
 obj-$(CONFIG_OF_LIBFDT) += libfdt/
 endif
