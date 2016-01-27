@@ -77,6 +77,7 @@ err_keydest:
  */
 static int fit_calc_size(struct image_tool_params *params)
 {
+	struct content_info *cont;
 	int size, total_size;
 
 	size = imagetool_get_filesize(params, params->datafile);
@@ -84,8 +85,14 @@ static int fit_calc_size(struct image_tool_params *params)
 		return -1;
 
 	total_size = size;
+	for (cont = params->content_head; cont; cont = cont->next) {
+		size = imagetool_get_filesize(params, cont->fname);
+		if (size < 0)
+			return -1;
 
-	/* TODO(sjg@chromium.org): Add in the size of any other files */
+		/* Add space for properties */
+		total_size += size + 300;
+	}
 
 	/* Add plenty of space for headers, properties, nodes, etc. */
 	total_size += 4096;
@@ -141,6 +148,28 @@ static int fdt_property_strf(void *fdt, const char *name, const char *fmt, ...)
 	return fdt_property_string(fdt, name, str);
 }
 
+static void get_basename(char *str, int size, const char *fname)
+{
+	const char *p, *start, *end;
+	int len;
+
+	/*
+	 * Use the base name as the 'name' field. So for example:
+	 *
+	 * "arch/arm/dts/sun7i-a20-bananapro.dtb"
+	 * becomes "sun7i-a20-bananapro"
+	 */
+	p = strrchr(fname, '/');
+	start = p ? p + 1 : fname;
+	p = strrchr(fname, '.');
+	end = p ? p : fname + strlen(fname);
+	len = end - start;
+	if (len >= size)
+		len = size - 1;
+	memcpy(str, start, len);
+	str[len] = '\0';
+}
+
 /**
  * fit_write_images() - Write out a list of images to the FIT
  *
@@ -149,8 +178,10 @@ static int fdt_property_strf(void *fdt, const char *name, const char *fmt, ...)
  */
 static int fit_write_images(struct image_tool_params *params, char *fdt)
 {
+	struct content_info *cont;
 	const char *typename;
 	char str[100];
+	int upto;
 	int ret;
 
 	fdt_begin_node(fdt, "images");
@@ -177,6 +208,27 @@ static int fit_write_images(struct image_tool_params *params, char *fdt)
 		return ret;
 	fdt_end_node(fdt);
 
+	/* Now the device tree files if available */
+	upto = 0;
+	for (cont = params->content_head; cont; cont = cont->next) {
+		if (cont->type != IH_TYPE_FLATDT)
+			continue;
+		snprintf(str, sizeof(str), "%s@%d", FIT_FDT_PROP, ++upto);
+		fdt_begin_node(fdt, str);
+
+		get_basename(str, sizeof(str), cont->fname);
+		fdt_property_string(fdt, "description", str);
+		ret = fdt_property_file(params, fdt, "data", cont->fname);
+		if (ret)
+			return ret;
+		fdt_property_string(fdt, "type", typename);
+		fdt_property_string(fdt, "arch",
+				    genimg_get_arch_short_name(params->arch));
+		fdt_property_string(fdt, "compression",
+				    genimg_get_comp_short_name(IH_COMP_NONE));
+		fdt_end_node(fdt);
+	}
+
 	fdt_end_node(fdt);
 
 	return 0;
@@ -193,17 +245,40 @@ static int fit_write_images(struct image_tool_params *params, char *fdt)
  */
 static void fit_write_configs(struct image_tool_params *params, char *fdt)
 {
+	struct content_info *cont;
 	const char *typename;
 	char str[100];
+	int upto;
 
 	fdt_begin_node(fdt, "configurations");
 	fdt_property_string(fdt, "default", "conf@1");
 
-	fdt_begin_node(fdt, "conf@1");
-	typename = genimg_get_type_short_name(params->fit_image_type);
-	snprintf(str, sizeof(str), "%s@1", typename);
-	fdt_property_string(fdt, typename, str);
-	fdt_end_node(fdt);
+	upto = 0;
+	for (cont = params->content_head; cont; cont = cont->next) {
+		if (cont->type != IH_TYPE_FLATDT)
+			continue;
+		typename = genimg_get_type_short_name(cont->type);
+		snprintf(str, sizeof(str), "conf@%d", ++upto);
+		fdt_begin_node(fdt, str);
+
+		get_basename(str, sizeof(str), cont->fname);
+		fdt_property_string(fdt, "description", str);
+
+		typename = genimg_get_type_short_name(params->fit_image_type);
+		snprintf(str, sizeof(str), "%s@1", typename);
+		fdt_property_string(fdt, typename, str);
+
+		snprintf(str, sizeof(str), FIT_FDT_PROP "@%d", upto);
+		fdt_property_string(fdt, FIT_FDT_PROP, str);
+		fdt_end_node(fdt);
+	}
+	if (!upto) {
+		fdt_begin_node(fdt, "conf@1");
+		typename = genimg_get_type_short_name(params->fit_image_type);
+		snprintf(str, sizeof(str), "%s@1", typename);
+		fdt_property_string(fdt, typename, str);
+		fdt_end_node(fdt);
+	}
 
 	fdt_end_node(fdt);
 }
