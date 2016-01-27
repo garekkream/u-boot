@@ -98,7 +98,6 @@
 #endif /* CONFIG_SPI_FLASH */
 
 /* Flattened Image Tree Suport */
-#define CONFIG_FIT
 #define CONFIG_FIT_VERBOSE
 
 /* I2C Configs */
@@ -442,7 +441,6 @@
 	"done"
 
 /* Device Tree Support */
-#define CONFIG_OF_BOARD_SETUP
 #define CONFIG_FDT_FIXUP_PARTITIONS
 
 #endif			       /* __CONFIG_H */

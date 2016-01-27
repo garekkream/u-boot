@@ -296,7 +296,6 @@ extern int soft_i2c_gpio_scl;
 
 /* To be able to hook simplefb into dt */
 #ifdef CONFIG_VIDEO_DT_SIMPLEFB
-#define CONFIG_OF_BOARD_SETUP
 #endif
 
 #endif /* CONFIG_VIDEO */

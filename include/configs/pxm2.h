@@ -150,7 +150,6 @@
 #endif
 
 #ifndef CONFIG_SPL_BUILD
-#define CONFIG_FIT
 #endif
 
 #endif	/* ! __CONFIG_PXM2_H */

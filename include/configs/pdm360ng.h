@@ -461,9 +461,7 @@
 
 #define CONFIG_BOOTCOMMAND	"run env_cont"
 
-#define CONFIG_OF_BOARD_SETUP	1
 #define CONFIG_OF_SUPPORT_OLD_DEVICE_TREES	1
-#define CONFIG_FIT
 #define CONFIG_FIT_VERBOSE
 
 #define OF_CPU			"PowerPC,5121@0"

@@ -278,7 +278,6 @@
 #define CONFIG_BOOTARGS							\
 
 /* Linux interfacing */
-#define CONFIG_OF_BOARD_SETUP
 
 /* Now for the remaining common defines */
 #include <configs/ti_armv7_common.h>

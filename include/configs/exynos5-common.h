@@ -178,7 +178,6 @@
 #define EXYNOS_IRAM_SECONDARY_BASE	0x02020018
 
 /* Enable FIT support and comparison */
-#define CONFIG_FIT
 #define CONFIG_FIT_BEST_MATCH
 
 #define BOOT_TARGET_DEVICES(func) \

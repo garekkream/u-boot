@@ -126,7 +126,6 @@
 #define CONFIG_CMD_PART
 
 /* Device tree support */
-#define CONFIG_OF_BOARD_SETUP
 /* ATAGs support for bootm/bootz */
 #define CONFIG_SETUP_MEMORY_TAGS
 #define CONFIG_CMDLINE_TAG

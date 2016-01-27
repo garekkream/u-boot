@@ -238,7 +238,6 @@
 #if !defined(CONFIG_SPL_BUILD)
 /* Enable Device-Tree (FDT) support */
 #define CONFIG_CMD_FDT
-#define CONFIG_FIT
 #endif
 
 #ifdef CONFIG_SPL_BUILD

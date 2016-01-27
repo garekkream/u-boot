@@ -20,7 +20,6 @@
 
 #ifndef CONFIG_SPL_BUILD
 #ifndef CONFIG_FIT
-# define CONFIG_FIT
 #endif
 # define CONFIG_TIMESTAMP
 # define CONFIG_LZO
