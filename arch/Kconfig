@@ -91,6 +91,7 @@ config SANDBOX
 	select DM_I2C
 	select DM_SPI
 	select DM_GPIO
+	select MTD
 
 config SH
 	bool "SuperH architecture"
