@@ -11,7 +11,7 @@ config TEGRA_COMMON
 	select DM_PCI_COMPAT
 	select DM_SERIAL
 	select DM_SPI
-	select DM_SPI_FLASH
+	select MTD
 	select OF_CONTROL
 
 config TEGRA_ARMV7_COMMON
