@@ -549,7 +549,7 @@ unsigned long get_board_ddr_clk(void);
 /*
  * eSPI - Enhanced SPI
  */
-#ifdef CONFIG_SPI_FLASH
+#ifdef CONFIG_MTD_SPI_NOR
 #ifndef CONFIG_SPL_BUILD
 #endif
 
