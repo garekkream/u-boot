@@ -144,7 +144,7 @@
 
 #ifdef CONFIG_SPL_BUILD
 #undef CONFIG_DM_SPI
-#undef CONFIG_DM_SPI_FLASH
+#undef CONFIG_MTD
 #endif
 
 /*
