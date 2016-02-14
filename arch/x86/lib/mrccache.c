@@ -216,8 +216,7 @@ int mrccache_get_region(struct udevice **devp, struct mrc_region *entry)
 	entry->length = reg[1];
 
 	if (devp) {
-		ret = uclass_get_device_by_of_offset(UCLASS_SPI_FLASH, node,
-						     devp);
+		ret = uclass_get_device_by_of_offset(UCLASS_MTD, node, devp);
 		debug("ret = %d\n", ret);
 		if (ret)
 			return ret;
