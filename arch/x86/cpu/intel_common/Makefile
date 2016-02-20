@@ -9,4 +9,5 @@ obj-y += cpu_common.o
 obj-y += lpc_common.o
 obj-y += me_status.o
 obj-y += microcode_intel.o
+obj-y += pch_common.o
 obj-y += report_platform.o
