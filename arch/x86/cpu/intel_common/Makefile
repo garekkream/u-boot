@@ -5,5 +5,6 @@
 #
 
 obj-$(CONFIG_HAVE_MRC) += car.o
+obj-y += cpu_common.o
 obj-y += lpc_common.o
 obj-y += microcode_intel.o

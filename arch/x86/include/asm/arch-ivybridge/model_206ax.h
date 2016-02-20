@@ -53,7 +53,6 @@
 #define MSR_CONFIG_TDP_LEVEL1		0x649
 #define MSR_CONFIG_TDP_LEVEL2		0x64a
 #define MSR_CONFIG_TDP_CONTROL		0x64b
-#define MSR_TURBO_ACTIVATION_RATIO	0x64c
 
 /* P-state configuration */
 #define PSS_MAX_ENTRIES			8
