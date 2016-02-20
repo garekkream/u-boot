@@ -62,7 +62,7 @@ static int microcode_decode_node(const void *blob, int node,
 	return 0;
 }
 
-static inline uint32_t microcode_read_rev(void)
+int microcode_read_rev(void)
 {
 	/*
 	 * Some Intel CPUs can be very finicky about the CPUID sequence used.
