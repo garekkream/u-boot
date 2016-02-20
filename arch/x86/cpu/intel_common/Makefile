@@ -5,3 +5,4 @@
 #
 
 obj-$(CONFIG_HAVE_MRC) += car.o
+obj-y += microcode_intel.o
