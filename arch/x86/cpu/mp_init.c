@@ -15,6 +15,7 @@
 #include <asm/cpu.h>
 #include <asm/interrupt.h>
 #include <asm/lapic.h>
+#include <asm/microcode.h>
 #include <asm/mp.h>
 #include <asm/msr.h>
 #include <asm/mtrr.h>
@@ -248,7 +249,8 @@ static int load_sipi_vector(atomic_t **ap_countp, int num_cpus)
 		return -ENOMEM;
 	params->stack_top = (u32)(stack + size);
 
-	params->microcode_ptr = 0;
+	params->microcode_ptr = ucode_base;
+	debug("Microcode at %x\n", params->microcode_ptr);
 	params->msr_table_ptr = (u32)msr_save;
 	ret = save_bsp_msrs(msr_save, sizeof(msr_save));
 	if (ret < 0)
