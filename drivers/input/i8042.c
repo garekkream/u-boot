@@ -128,6 +128,12 @@ static int kbd_reset(int quirk)
 	if (kbd_cmd_read(CMD_SELF_TEST) != KBC_TEST_OK)
 		goto err;
 
+	if (kbd_write(I8042_DATA_REG, 0xf4) ||
+	    kbd_read(I8042_DATA_REG) != KBD_ACK) {
+		debug("Keyboard enable failed ACK\n");
+		goto err;
+	}
+
 	/* keyboard reset */
 	if (kbd_write(I8042_DATA_REG, CMD_RESET_KBD) ||
 	    kbd_read(I8042_DATA_REG) != KBD_ACK ||
