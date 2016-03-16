@@ -175,8 +175,7 @@ static void prepare_backup_gpt_header(gpt_header *gpt_h)
 /*
  * Public Functions (include/part.h)
  */
-
-void part_print_efi(struct blk_desc *dev_desc)
+static void part_print_efi(struct blk_desc *dev_desc)
 {
 	ALLOC_CACHE_ALIGN_BUFFER_PAD(gpt_header, gpt_head, 1, dev_desc->blksz);
 	gpt_entry *gpt_pte = NULL;
@@ -184,10 +183,6 @@ void part_print_efi(struct blk_desc *dev_desc)
 	char uuid[37];
 	unsigned char *uuid_bin;
 
-	if (!dev_desc) {
-		printf("%s: Invalid Argument(s)\n", __func__);
-		return;
-	}
 	/* This function validates AND fills in the GPT header and PTE */
 	if (is_gpt_valid(dev_desc, GPT_PRIMARY_PARTITION_TABLE_LBA,
 			 gpt_head, &gpt_pte) != 1) {
@@ -237,8 +232,8 @@ void part_print_efi(struct blk_desc *dev_desc)
 	return;
 }
 
-int part_get_info_efi(struct blk_desc *dev_desc, int part,
-		      disk_partition_t *info)
+static int part_get_info_efi(struct blk_desc *dev_desc, int part,
+			     disk_partition_t *info)
 {
 	ALLOC_CACHE_ALIGN_BUFFER_PAD(gpt_header, gpt_head, 1, dev_desc->blksz);
 	gpt_entry *gpt_pte = NULL;
