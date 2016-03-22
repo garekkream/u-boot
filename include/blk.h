@@ -243,6 +243,83 @@ static inline ulong blk_derase(struct blk_desc *block_dev, lbaint_t start,
 {
 	return block_dev->block_erase(block_dev, start, blkcnt);
 }
+
+int blk_list_part(enum if_type if_type);
+void blk_list_devices(enum if_type if_type);
+int blk_show_device(enum if_type if_type, int devnum);
+int blk_print_device_num(enum if_type if_type, int devnum);
+int blk_print_part_devnum(enum if_type if_type, int devnum);
+
+ulong blk_read_devnum(enum if_type if_type, int devnum, lbaint_t start,
+		      lbaint_t blkcnt, void *buffer);
+ulong blk_write_devnum(enum if_type if_type, int devnum, lbaint_t start,
+		       lbaint_t blkcnt, const void *buffer);
+
+/**
+ * struct blk_driver - Driver for block interface types
+ *
+ * This provides access to the block devices for each interface type. One
+ * driver should be provided using U_BOOT_LEGACY_BLK() for each interface
+ * type that is to be supported.
+ *
+ * @if_typename:	Interface type name
+ * @if_type:		Interface type
+ * @max_devs:		Maximum number of devices supported
+ * @desc:		Pointer to list of devices for this interface type,
+ *			or NULL to use @get_dev() instead
+ */
+struct blk_driver {
+	const char *if_typename;
+	enum if_type if_type;
+	int max_devs;
+	struct blk_desc *desc;
+	/**
+	 * get_dev() - get a pointer to a block device given its number
+	 *
+	 * Each interface allocates its own devices and typically
+	 * struct blk_desc is contained with the interface's data structure.
+	 * There is no global numbering for block devices. This method allows
+	 * the device for an interface type to be obtained when @desc is NULL.
+	 *
+	 * @devnum:	Device number (0 for first device on that interface,
+	 *		1 for second, etc.
+	 * @descp:	Returns pointer to the block device on success
+	 * @return 0 if OK, -ve on error
+	 */
+	int (*get_dev)(int devnum, struct blk_desc **descp);
+
+	/**
+	 * select_hwpart() - Select a hardware partition
+	 *
+	 * Some devices (e.g. MMC) can support partitioning at the hardware
+	 * level. This is quite separate from the normal idea of
+	 * software-based partitions. MMC hardware partitions must be
+	 * explicitly selected. Once selected only the region of the device
+	 * covered by that partition is accessible.
+	 *
+	 * The MMC standard provides for two boot partitions (numbered 1 and 2),
+	 * rpmb (3), and up to 4 addition general-purpose partitions (4-7).
+	 *
+	 * @desc:	Block device descriptor
+	 * @hwpart:	Hardware partition number to select. 0 means the raw
+	 *		device, 1 is the first partition, 2 is the second, etc.
+	 * @return 0 if OK, other value for an error
+	 */
+	int (*select_hwpart)(struct blk_desc *desc, int hwpart);
+};
+
+/*
+ * Declare a new U-Boot legacy block driver. New drivers should use driver
+ * model (UCLASS_BLK).
+ */
+#define U_BOOT_LEGACY_BLK(__name)					\
+	ll_entry_declare(struct blk_driver, __name, part_driver)
+
+struct blk_desc *blk_get_devnum_by_type(enum if_type if_type, int devnum);
+struct blk_desc *blk_get_devnum_by_typename(const char *if_typename,
+					    int devnum);
+int blk_select_hwpart(struct blk_desc *desc, int hwpart);
+
 #endif /* !CONFIG_BLK */
 
 #endif
