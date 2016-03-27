@@ -8,7 +8,7 @@
 #include <common.h>
 #include <linux/err.h>
 
-static struct blk_driver *blk_driver_lookup_type(int if_type)
+struct blk_driver *blk_driver_lookup_type(int if_type)
 {
 	struct blk_driver *drv = ll_entry_start(struct blk_driver, blk_driver);
 	const int n_ents = ll_entry_count(struct blk_driver, blk_driver);

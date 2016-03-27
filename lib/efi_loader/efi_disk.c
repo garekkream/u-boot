@@ -7,6 +7,7 @@
  */
 
 #include <common.h>
+#include <blk.h>
 #include <efi_loader.h>
 #include <inttypes.h>
 #include <part.h>
@@ -147,13 +148,17 @@ static const struct efi_block_io block_io_disk_template = {
  */
 int efi_disk_register(void)
 {
-	const struct block_drvr *cur_drvr;
-	int i;
+	const struct blk_driver *cur_drvr;
+	int i, if_type;
 	int disks = 0;
 
 	/* Search for all available disk devices */
-	for (cur_drvr = block_drvr; cur_drvr->name; cur_drvr++) {
-		printf("Scanning disks on %s...\n", cur_drvr->name);
+	for (if_type = 0; if_type < IF_TYPE_COUNT; if_type++) {
+		cur_drvr = blk_driver_lookup_type(if_type);
+		if (!cur_drvr)
+			continue;
+
+		printf("Scanning disks on %s...\n", cur_drvr->if_typename);
 		for (i = 0; i < 4; i++) {
 			struct blk_desc *desc;
 			struct efi_disk_obj *diskobj;
@@ -161,7 +166,7 @@ int efi_disk_register(void)
 			int objlen = sizeof(*diskobj) + (sizeof(*dp) * 2);
 			char devname[16] = { 0 }; /* dp->str is u16[16] long */
 
-			desc = blk_get_dev(cur_drvr->name, i);
+			desc = blk_get_devnum_by_type(if_type, i);
 			if (!desc)
 				continue;
 			if (desc->type == DEV_TYPE_UNKNOWN)
@@ -176,7 +181,7 @@ int efi_disk_register(void)
 			diskobj->parent.protocols[1].open = efi_disk_open_dp;
 			diskobj->parent.handle = diskobj;
 			diskobj->ops = block_io_disk_template;
-			diskobj->ifname = cur_drvr->name;
+			diskobj->ifname = cur_drvr->if_typename;
 			diskobj->dev_index = i;
 
 			/* Fill in EFI IO Media info (for read/write callbacks) */
@@ -194,7 +199,7 @@ int efi_disk_register(void)
 			dp[0].dp.sub_type = DEVICE_PATH_SUB_TYPE_FILE_PATH;
 			dp[0].dp.length = sizeof(*dp);
 			snprintf(devname, sizeof(devname), "%s%d",
-				 cur_drvr->name, i);
+				 cur_drvr->if_typename, i);
 			ascii2unicode(dp[0].str, devname);
 
 			dp[1].dp.type = DEVICE_PATH_TYPE_END;

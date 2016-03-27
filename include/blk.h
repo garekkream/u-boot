@@ -321,6 +321,8 @@ struct blk_desc *blk_get_devnum_by_typename(const char *if_typename,
 					    int devnum);
 int blk_select_hwpart(struct blk_desc *desc, int hwpart);
 
+struct blk_driver *blk_driver_lookup_type(int if_type);
+
 #endif /* !CONFIG_BLK */
 
 #endif
