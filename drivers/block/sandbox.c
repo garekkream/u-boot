@@ -240,3 +240,10 @@ U_BOOT_DRIVER(sandbox_host_blk) = {
 	.priv_auto_alloc_size	= sizeof(struct host_block_dev),
 };
 #endif
+
+U_BOOT_LEGACY_BLK(sandbox_host) = {
+	.if_typename	= "host",
+	.if_type	= IF_TYPE_HOST,
+	.max_devs	= CONFIG_HOST_MAX_DEVICES,
+	.get_dev	= host_get_dev_err,
+};
