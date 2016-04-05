@@ -217,6 +217,8 @@ struct blk_ops {
 	 */
 	unsigned long (*erase)(struct udevice *dev, lbaint_t start,
 			       lbaint_t blkcnt);
+
+	int (*select_hwpart)(struct udevice *dev, int hwpart);
 };
 
 #define blk_get_ops(dev)	((struct blk_ops *)(dev)->driver->ops)
@@ -334,6 +336,17 @@ int blk_unbind_all(int if_type);
  * error
  */
 int blk_find_max_devnum(enum if_type if_type);
+
+/**
+ * blk_select_hwpart() - select a hardware partition
+ *
+ * Select a hardware partition if the device supports it (typically MMC does)
+ *
+ * @dev:	Device to update
+ * @hwpart:	Partition number to select
+ * @return 0 if OK, -ve on error
+ */
+int blk_select_hwpart(struct udevice *dev, int hwpart);
 
 #else
 #include <errno.h>
