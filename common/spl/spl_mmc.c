@@ -286,7 +286,7 @@ int spl_mmc_load_image(u32 boot_device)
 			if (part == 7)
 				part = 0;
 
-			err = mmc_switch_part(0, part);
+			err = blk_select_hwpart_devnum(IF_TYPE_MMC0, part);
 			if (err) {
 #ifdef CONFIG_SPL_LIBCOMMON_SUPPORT
 				puts("spl: mmc partition switch failed\n");
