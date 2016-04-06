@@ -46,4 +46,9 @@ static inline ulong mmc_bwrite(struct blk_desc *block_dev, lbaint_t start,
 
 #endif /* CONFIG_SPL_BUILD */
 
+int mmc_get_next_devnum(void);
+void mmc_do_preinit(void);
+void mmc_list_init(void);
+void mmc_list_add(struct mmc *mmc);
+
 #endif /* _MMC_PRIVATE_H_ */
