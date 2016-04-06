@@ -819,6 +819,7 @@ static int omap_hsmmc_probe(struct udevice *dev)
 	if (mmc == NULL)
 		return -1;
 
+	mmc->dev = dev;
 	upriv->mmc = mmc;
 
 	return 0;
