@@ -349,7 +349,7 @@ int blk_get_device_by_str(const char *ifname, const char *dev_hwpart_str,
 	if (*ep) {
 		printf("** Bad device specification %s %s **\n",
 		       ifname, dev_str);
-		dev = -1;
+		dev = -EINVAL;
 		goto cleanup;
 	}
 
@@ -358,7 +358,7 @@ int blk_get_device_by_str(const char *ifname, const char *dev_hwpart_str,
 		if (*ep) {
 			printf("** Bad HW partition specification %s %s **\n",
 			    ifname, hwpart_str);
-			dev = -1;
+			dev = -EINVAL;
 			goto cleanup;
 		}
 	}
@@ -366,7 +366,7 @@ int blk_get_device_by_str(const char *ifname, const char *dev_hwpart_str,
 	*dev_desc = get_dev_hwpart(ifname, dev, hwpart);
 	if (!(*dev_desc) || ((*dev_desc)->type == DEV_TYPE_UNKNOWN)) {
 		printf("** Bad device %s %s **\n", ifname, dev_hwpart_str);
-		dev = -1;
+		dev = -ENOENT;
 		goto cleanup;
 	}
 
