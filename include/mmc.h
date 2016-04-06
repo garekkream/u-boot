@@ -409,7 +409,10 @@ enum mmc_hwpart_conf_mode {
 
 int mmc_register(struct mmc *mmc);
 struct mmc *mmc_create(const struct mmc_config *cfg, void *priv);
+int mmc_bind(struct udevice *dev, struct mmc *mmc,
+	     const struct mmc_config *cfg);
 void mmc_destroy(struct mmc *mmc);
+int mmc_unbind(struct udevice *dev);
 int mmc_initialize(bd_t *bis);
 int mmc_init(struct mmc *mmc);
 int mmc_read(struct mmc *mmc, u64 src, uchar *dst, int size);
