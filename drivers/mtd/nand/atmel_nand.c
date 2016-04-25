@@ -20,6 +20,8 @@
 #include <watchdog.h>
 #include <linux/mtd/nand_ecc.h>
 
+#define dev_warn(dev, msg...)
+
 #ifdef CONFIG_ATMEL_NAND_HWECC
 
 /* Register access macros */
