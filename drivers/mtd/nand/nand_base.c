@@ -877,7 +877,6 @@ static void panic_nand_wait(struct mtd_info *mtd, struct nand_chip *chip,
  */
 static int nand_wait(struct mtd_info *mtd, struct nand_chip *chip)
 {
-
 	int status, state = chip->state;
 	unsigned long timeo = (state == FL_ERASING ? 400 : 20);
 
